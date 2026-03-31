@@ -1,0 +1,26 @@
+name: torch-warp-ngp
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - pytorch==2.8.0
+  - torchvision==0.23.0
+  - torchaudio==2.8.0
+  - pytorch-cuda=12.1
+  - numpy==1.26.4
+  - pandas
+  - matplotlib
+  - tqdm
+  - scikit-image
+  - scipy
+  - pyyaml
+  - pip:
+      - warp-lang==1.11.0
+      - opencv-python-headless
+      - ninja
+      - cmake
+      - triton
