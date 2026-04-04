@@ -1,6 +1,8 @@
 import math
 import torch
 import torch.nn as nn
+import numpy as np
+from config import Config
 try:
     import warp as wp
     HAS_WARP = True
@@ -150,7 +152,7 @@ if HAS_WARP:
             wp.launch(kernel=hash_grid_forward_kernel, dim=N, inputs=[
                 wp.from_torch(inputs), wp.from_torch(embeddings), wp.from_torch(resolutions),
                 wp.from_torch(primes), L, T, F, wp.from_torch(encoded)
-            ])
+            ], device=config.DEVICE)
             return encoded
 
         @staticmethod
@@ -163,7 +165,7 @@ if HAS_WARP:
             wp.launch(kernel=hash_grid_backward_kernel, dim=N, inputs=[
                 wp.from_torch(grad_output.contiguous()), wp.from_torch(inputs), wp.from_torch(resolutions),
                 wp.from_torch(primes), L, T, F, wp.from_torch(grad_embeddings)
-            ])
+            ], device=Config.DEVICE)
             return None, grad_embeddings, None, None, None
 
     class HashEncodingWarp(nn.Module):
@@ -174,7 +176,7 @@ if HAS_WARP:
             b = math.exp((math.log(config.N_MAX) - math.log(config.N_MIN)) / (config.L - 1))
             resolutions_list = [math.floor(config.N_MIN * (b ** i)) for i in range(config.L)]
             self.register_buffer('resolutions', torch.tensor(resolutions_list, dtype=torch.int32))
-            self.register_buffer('primes', torch.tensor([config.PRIME_1, config.PRIME_2, config.PRIME_3]))
+            self.register_buffer('primes', torch.tensor([config.PRIME_1, -1640531535, config.PRIME_3], dtype=torch.int32))
             self.embeddings = nn.Parameter(torch.zeros(self.L, self.T, self.F))
             nn.init.uniform_(self.embeddings, -1e-4, 1e-4)
             

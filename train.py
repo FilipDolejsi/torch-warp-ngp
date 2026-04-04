@@ -359,9 +359,9 @@ def main():
             train_dataset.shuffle()
             ray_idx = 0
             
-        batch_o = train_dataset.rays_o[ray_idx : ray_idx + config.BATCH_SIZE]
-        batch_d = train_dataset.rays_d[ray_idx : ray_idx + config.BATCH_SIZE]
-        batch_rgba = train_dataset.target_rgba[ray_idx : ray_idx + config.BATCH_SIZE]
+        batch_o = train_dataset.rays_o[ray_idx : ray_idx + config.BATCH_SIZE].to(config.DEVICE)
+        batch_d = train_dataset.rays_d[ray_idx : ray_idx + config.BATCH_SIZE].to(config.DEVICE)
+        batch_rgba = train_dataset.target_rgba[ray_idx : ray_idx + config.BATCH_SIZE].to(config.DEVICE)
         ray_idx += config.BATCH_SIZE
         
         if config.RANDOM_BG_TRAIN:

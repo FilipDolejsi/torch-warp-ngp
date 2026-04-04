@@ -1,5 +1,6 @@
 import torch
 import torch.nn.functional as F
+from config import Config
 try:
     import warp as wp
     HAS_WARP = True
@@ -85,7 +86,8 @@ def render_rays(model, origins, dirs, aabb_min, aabb_max, background_color, num_
                 float(aabb_min[0]), float(aabb_min[1]), float(aabb_min[2]),
                 float(aabb_max[0]), float(aabb_max[1]), float(aabb_max[2]),
                 wp.from_torch(t_near), wp.from_torch(t_far), wp.from_torch(valid_mask_int)
-            ]
+            ],
+            device=Config.DEVICE
         )
         valid_mask = valid_mask_int.bool()
         t_near_valid = t_near[valid_mask]

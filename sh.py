@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from config import Config
 try:
     import warp as wp
     HAS_WARP = True
@@ -117,7 +118,7 @@ if HAS_WARP:
         def forward(ctx, dirs):
             N = dirs.shape[0]
             out = torch.empty((N, 16), device=dirs.device, dtype=torch.float32)
-            wp.launch(kernel=sh_forward_kernel, dim=N, inputs=[wp.from_torch(dirs), wp.from_torch(out)])
+            wp.launch(kernel=sh_forward_kernel, dim=N, inputs=[wp.from_torch(dirs), wp.from_torch(out)], device=Config.DEVICE)
             return out
 
         @staticmethod
