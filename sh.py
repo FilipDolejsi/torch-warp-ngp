@@ -1,6 +1,11 @@
 import torch
 import torch.nn as nn
-from . import wp, HAS_WARP
+try:
+    import warp as wp
+    HAS_WARP = True
+except Exception:
+    wp = None
+    HAS_WARP = False
 
 class SphericalHarmonics(nn.Module):
     def __init__(self, degree=4):

@@ -2,12 +2,28 @@ import os
 import time
 import json
 import torch
+import numpy as np
 import torch.nn.functional as F
-from .config import Config
-from .data import NeRFDataset
-from .model import InstantNGP
-from .rendering import render_rays
-from . import plt, HAS_MATPLOTLIB, compute_ssim, HAS_SSIM, imageio
+from config import Config
+from data import NeRFDataset
+from model import InstantNGP
+from rendering import render_rays
+
+try:
+    import matplotlib.pyplot as plt
+    HAS_MATPLOTLIB = True
+except Exception:
+    plt = None
+    HAS_MATPLOTLIB = False
+
+try:
+    from skimage.metrics import structural_similarity as compute_ssim
+    HAS_SSIM = True
+except Exception:
+    compute_ssim = None
+    HAS_SSIM = False
+
+import imageio
 
 
 def compute_scene_bounds(config):
@@ -412,8 +428,28 @@ def main():
     metrics["eval_fps"] = eval_fps
     
     metrics_path = os.path.join(run_dir, "metrics.json")
+    def to_serializable(obj):
+        # Convert torch tensors / numpy types to Python primitives for JSON
+        try:
+            import torch as _torch
+            if isinstance(obj, _torch.Tensor):
+                if obj.numel() == 1:
+                    return obj.item()
+                return obj.tolist()
+        except Exception:
+            pass
+
+        if isinstance(obj, (np.floating,)):
+            return float(obj)
+        if isinstance(obj, (np.integer,)):
+            return int(obj)
+        if isinstance(obj, (np.ndarray,)):
+            return obj.tolist()
+
+        return obj
+
     with open(metrics_path, 'w') as f:
-        json.dump(metrics, f, indent=4)
+        json.dump(metrics, f, indent=4, default=to_serializable)
     print(f"Saved run metrics textually to: {metrics_path}")
     
     generate_graphs(metrics, run_dir)

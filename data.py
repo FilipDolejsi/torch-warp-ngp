@@ -3,7 +3,7 @@ import time
 import json
 import numpy as np
 import torch
-from . import imageio
+import imageio
 
 class NeRFDataset:
     def __init__(self, root_dir, split='train', device='cpu'):

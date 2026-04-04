@@ -1,7 +1,12 @@
 import math
 import torch
 import torch.nn as nn
-from . import wp, HAS_WARP
+try:
+    import warp as wp
+    HAS_WARP = True
+except Exception:
+    wp = None
+    HAS_WARP = False
 
 class HashEncodingPyTorch(nn.Module):
     def __init__(self, config):
@@ -169,7 +174,7 @@ if HAS_WARP:
             b = math.exp((math.log(config.N_MAX) - math.log(config.N_MIN)) / (config.L - 1))
             resolutions_list = [math.floor(config.N_MIN * (b ** i)) for i in range(config.L)]
             self.register_buffer('resolutions', torch.tensor(resolutions_list, dtype=torch.int32))
-            self.register_buffer('primes', torch.tensor([config.PRIME_1, config.PRIME_2, config.PRIME_3], dtype=torch.int32))
+            self.register_buffer('primes', torch.tensor([config.PRIME_1, config.PRIME_2, config.PRIME_3]))
             self.embeddings = nn.Parameter(torch.zeros(self.L, self.T, self.F))
             nn.init.uniform_(self.embeddings, -1e-4, 1e-4)
             

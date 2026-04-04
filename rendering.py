@@ -1,7 +1,12 @@
 import torch
 import torch.nn.functional as F
-from . import wp, HAS_WARP
-
+try:
+    import warp as wp
+    HAS_WARP = True
+except Exception:
+    wp = None
+    HAS_WARP = False
+    
 def contract_to_unit_cube(pts, aabb_min, aabb_max):
     return (pts - aabb_min) / (aabb_max - aabb_min)
 

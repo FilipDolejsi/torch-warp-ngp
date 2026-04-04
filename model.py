@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from .encoding import HashEncodingPyTorch, HashEncodingWarp
-from .sh import SphericalHarmonics, SphericalHarmonicsWarp
-from .config import Config
+from encoding import HashEncodingPyTorch, HashEncodingWarp
+from sh import SphericalHarmonics, SphericalHarmonicsWarp
+from config import Config
 
 class InstantNGP(nn.Module):
     def __init__(self, config):
